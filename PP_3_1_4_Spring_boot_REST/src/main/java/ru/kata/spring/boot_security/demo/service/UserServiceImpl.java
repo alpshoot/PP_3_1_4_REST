@@ -55,9 +55,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     public void updateUser(User user) {
 
-//        if (!user.getPassword().equals(getUserForID(user.getId()).getPassword())) {
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        }
+        if (!user.getPassword().equals(getUserForID(user.getId()).getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        if (user.getRoles().isEmpty()){
+            user.setRoles( getUserForID(user.getId()).getRoles());
+        }
         userRepository.save(user);
     }
 
