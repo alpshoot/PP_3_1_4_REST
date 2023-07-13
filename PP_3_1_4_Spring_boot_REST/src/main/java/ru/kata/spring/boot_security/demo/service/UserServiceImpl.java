@@ -24,11 +24,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
-
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -38,48 +40,47 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Transactional
-    @Override
     public User getUserForID(Long id) {
         return userRepository.findById(id).get();
     }
 
-    @Override
+
     @Transactional
     public void createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
-    @Override
+
     @Transactional
     public void updateUser(User user) {
-        if (!user.getPassword().equals(getUserForID(user.getId()).getPassword())) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
+
+//        if (!user.getPassword().equals(getUserForID(user.getId()).getPassword())) {
+//            user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        }
         userRepository.save(user);
     }
 
-    @Override
+
     @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
+
     public User getUserByLogin(String email) {
         return userRepository.findByUsername(email);
     }
 
-    @Transactional
+@Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByUsername(email);
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthority(Collection<Role> roles) {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRole()))
-                .collect(Collectors.toList());
-    }
+//    private Collection<? extends GrantedAuthority> mapRolesToAuthority(Collection<Role> roles) {
+//        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRole()))
+//                .collect(Collectors.toList());
+//    }
 
 
 }

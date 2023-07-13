@@ -131,6 +131,8 @@ $('#editForm').submit((e) => {
     let $userForDB = {};
     let $roles = [];
 
+
+
     $('#editForm').find('option:selected').each(function () {
         let $role = $(this).data();
         $roles.push($role)
